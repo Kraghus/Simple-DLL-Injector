@@ -30,8 +30,8 @@ DWORD GetProcessID(const char* processName)
 
 int main()
 {
-    const char* dllPath = "C:";
-    const char* processName = ".exe";
+    const char* dllPath = "C:\\Users\\mason\\OneDrive\\Desktop\\Dev\\Assault Cube Internal Trainer\\Debug\\Assault Cube Internal Trainer.dll";
+    const char* processName = "ac_client.exe";
     DWORD processID = 0;
 
     while (!processID)
@@ -46,7 +46,11 @@ int main()
     {
         void* loc = VirtualAllocEx(hProcess, 0, MAX_PATH, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
-        WriteProcessMemory(hProcess, loc, dllPath, strlen(dllPath) + 1, 0);
+        if (loc)
+        {
+
+            WriteProcessMemory(hProcess, loc, dllPath, strlen(dllPath) + 1, 0);
+        }
 
         HANDLE hThread = CreateRemoteThread(hProcess, 0, 0, (LPTHREAD_START_ROUTINE)LoadLibraryA, loc, 0, 0);
 
