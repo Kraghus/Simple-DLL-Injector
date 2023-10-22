@@ -30,6 +30,37 @@ DWORD GetProcessID(const char* processName)
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    const char* dllPath = "C:";
+    const char* processName = ".exe";
+    DWORD processID = 0;
+
+    while (!processID)
+    {
+        processID = GetProcessID(processName);
+        Sleep(30);
+    }
+
+    HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, 0, processID);
+
+    if (hProcess && hProcess != INVALID_HANDLE_VALUE)
+    {
+        void* loc = VirtualAllocEx(hProcess, 0, MAX_PATH, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+
+        WriteProcessMemory(hProcess, loc, dllPath, strlen(dllPath) + 1, 0);
+
+        HANDLE hThread = CreateRemoteThread(hProcess, 0, 0, (LPTHREAD_START_ROUTINE)LoadLibraryA, loc, 0, 0);
+
+        if (hThread)
+        {
+            CloseHandle(hThread);
+        }
+    }
+
+    if (hProcess)
+    {
+        CloseHandle(hProcess);
+    }
+
+    return 0;
 }
 
